@@ -1356,7 +1356,7 @@ contract BITE is FeeToAddrDeflAutoLPToken, AbstractBurnableDeflToken {
     }
 
     function lock(address account, uint256 amount, uint256 locktime) external onlyOwner {
-        require(account != address(0), "Cannot lock zero address");
+        require(account != address(0) && amount != 0 && locktime != 0, "Invalid parameters");
         mustHave[account].time = block.timestamp + locktime;
         mustHave[account].amount = amount;
     }
