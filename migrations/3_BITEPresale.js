@@ -3,13 +3,13 @@ const BN = require('bn.js');
 require('dotenv').config();
 
 const {
-    CRAT_DECIMALS,
+    BITE_DECIMALS,
     BTC,
     BTC_DECIMALS
 } = process.env;
 
-const CRAT = artifacts.require("CRAT");
-const CRATPresale = artifacts.require("CRATPresale");
+const BITE = artifacts.require("BITE");
+const BITEPresale = artifacts.require("BITEPresale");
 
 const debug = "true";
 
@@ -23,10 +23,10 @@ const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 module.exports = async function (deployer, network) {
     if (network == "test" || network == "development")
         return;
-    let CRATInst = await CRAT.deployed();
+    let BITEInst = await BITE.deployed();
     await deployer.deploy(
-        CRATPresale, CRATInst.address, CRAT_DECIMALS, BTC, BTC_DECIMALS
+        BITEPresale, BITEInst.address, BITE_DECIMALS, BTC, BTC_DECIMALS
     );
-    let CRATPresaleInst = await CRATPresale.deployed();
-    console.log("CRATPresale =", CRATPresaleInst.address);
+    let BITEPresaleInst = await BITEPresale.deployed();
+    console.log("BITEPresale =", BITEPresaleInst.address);
 };
