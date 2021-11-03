@@ -2,6 +2,13 @@ const BN = require('bn.js');
 
 require('dotenv').config();
 
+const {
+    BITE_OWNER,
+    BITE_BENEFICIARY,
+    BITE_BENEFICIARY_PERCENT,
+    DEPLOYER_ADDRESS
+} = process.env;
+
 const DeflationaryAutoLPToken = artifacts.require("BITE");
 
 const DEFAULT_NAME = "Coinbite";
@@ -19,7 +26,8 @@ const IS_LP_ENABLED_DEFAULT = true;
 
 const KOVAN_UNISWAP_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 const BSC_TESTNET_ROUTER = "0xCc7aDc94F3D80127849D2b41b6439b7CF1eB4Ae0";
-const ROUTER = KOVAN_UNISWAP_ROUTER;
+const BSC_MAINNET_ROUTER = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
+const ROUTER = BSC_MAINNET_ROUTER;
 
 
 module.exports = async function (deployer, network) {
@@ -41,7 +49,16 @@ module.exports = async function (deployer, network) {
     );
 
 
-    let DeflationaryAutoLPTokenInst = await DeflationaryAutoLPToken.deployed();
-    console.log("Token = ", DeflationaryAutoLPTokenInst.address);
-    console.log("Contract name = ", DEFAULT_SYMBOL);
+    let BITEInst = await DeflationaryAutoLPToken.deployed();
+    console.log("Token = ", BITEInst.address);
+
+    await BITEInst.setLiquidityOwner(BITE_OWNER);
+
+    await BITEInst.setFeeBeneficiary(BITE_BENEFICIARY);
+    await BITEInst.setToAddressFee(BITE_BENEFICIARY_PERCENT);
+
+    await BITEInst.transfer(BITE_OWNER, DEFAULT_TOTAL_AMOUNT);
+
+    await BITEInst.includeInFee(DEPLOYER_ADDRESS);
+    await BITEInst.transferOwnership(BITE_OWNER);
 };

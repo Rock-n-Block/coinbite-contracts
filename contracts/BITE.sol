@@ -1164,7 +1164,7 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
     // it is not always possible to do it perfectly
     function getOptimalAmountToSell(int X, int dX) private pure returns(uint256) {
         int feeDenom = 1000000;
-        int f = 997000; // 1 - fee
+        int f = 997500; // 1 - fee
         unchecked {
             int T1 = X*(X*(feeDenom + f)**2 + 4*feeDenom*dX*f);
 
