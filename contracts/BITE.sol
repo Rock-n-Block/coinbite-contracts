@@ -1,15 +1,30 @@
 // SPDX-License-Identifier: MIT
-// Sources flattened with hardhat v2.3.0 https://hardhat.org
 
-// File openzeppelin-solidity/contracts/token/ERC20/IERC20.sol@v4.1.0
+// Coinbite is on a mission: to make financial freedom a reality for ordinary people all around the world 
+// and BITE is the utility token driving this exciting eco-system. 
 
+// The Company has ambitious plans to become a leading global marketplace for private, 
+// early stage equity investment through the creation of a blockchain powered crowdfunding platform. 
+// Distributed Ledger Technology (DLT), and tokenisation, enables asset owners to turn the ownership rights to a share of any asset, 
+// in any asset class, into a tradable digital token.
+// In addition to providing business owners with a more effective way to launch crowdfunding campaigns, 
+// Coinbite will also provide investors (retail, intermediary and institutional), 
+// with a transparent, cost-efficient and crucially — a compliant way to invest in a broad range of sectors. 
+
+// Coinbite aims to democratise the investment process by offering accessible, 
+// inclusive investment opportunities to previously excluded groups as well as providing a range of other products and services 
+// including, educational resources, blockchain games, NFTs, wallets and more.
+
+// To learn more about our road map, tokenomics and team, please view our White Paper: https://www.coinbite.com/white-paper
+
+// We are pleased to welcome you to the Coinbite global community.
 
 pragma solidity ^0.8.0;
 
 /**
- * @dev Interface of the ERC20 standard as defined in the EIP.
+ * @dev Interface of the BEP20 standard as defined in the EIP.
  */
-interface IERC20 {
+interface IBEP20 {
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -81,7 +96,7 @@ interface IERC20 {
 }
 
 
-// File openzeppelin-solidity/contracts/utils/Context.sol@v4.1.0
+
 
 
 pragma solidity ^0.8.0;
@@ -108,7 +123,7 @@ abstract contract Context {
 }
 
 
-// File openzeppelin-solidity/contracts/access/Ownable.sol@v4.1.0
+
 
 
 pragma solidity ^0.8.0;
@@ -147,6 +162,13 @@ abstract contract Ownable is Context {
     }
 
     /**
+     * @dev Returns the address of the current owner.
+     */
+    function getOwner() external view returns (address) {
+        return _owner;
+    }
+
+    /**
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
@@ -178,7 +200,7 @@ abstract contract Ownable is Context {
 }
 
 
-// File openzeppelin-solidity/contracts/utils/math/SafeMath.sol@v4.1.0
+
 
 
 pragma solidity ^0.8.0;
@@ -399,11 +421,11 @@ library SafeMath {
 }
 
 
-// File @uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol@v1.1.0-beta.0
+
 
 pragma solidity >=0.6.2;
 
-interface IUniswapV2Router01 {
+interface IPancakeV2Router01 {
     function factory() external pure returns (address);
     function WETH() external pure returns (address);
 
@@ -498,11 +520,11 @@ interface IUniswapV2Router01 {
 }
 
 
-// File @uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol@v1.1.0-beta.0
+
 
 pragma solidity >=0.6.2;
 
-interface IUniswapV2Router02 is IUniswapV2Router01 {
+interface IPancakeV2Router02 is IPancakeV2Router01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
@@ -544,11 +566,11 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
 }
 
 
-// File @uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol@v1.0.1
+
 
 pragma solidity >=0.5.0;
 
-interface IUniswapV2Factory {
+interface IPancakeV2Factory {
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
     function feeTo() external view returns (address);
@@ -565,11 +587,11 @@ interface IUniswapV2Factory {
 }
 
 
-// File @uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol@v1.0.1
+
 
 pragma solidity >=0.5.0;
 
-interface IUniswapV2Pair {
+interface IPancakeV2Pair {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
@@ -621,11 +643,11 @@ interface IUniswapV2Pair {
 }
 
 
-// File contracts/tokens/abstract/AbstractDeflationaryToken.sol
+
 
 
 pragma solidity ^0.8.0;
-abstract contract AbstractDeflationaryToken is Context, IERC20, Ownable {
+abstract contract AbstractDeflationaryToken is Context, IBEP20, Ownable {
     using SafeMath for uint256; // only for custom reverts on sub
 
     mapping (address => uint256) internal _rOwned;
@@ -709,7 +731,7 @@ abstract contract AbstractDeflationaryToken is Context, IERC20, Ownable {
 
     function transferFrom(address sender, address recipient, uint256 amount) external override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "ERC20: transfer amount exceeds allowance"));
+        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "BEP20: transfer amount exceeds allowance"));
         return true; 
     }
 
@@ -719,7 +741,7 @@ abstract contract AbstractDeflationaryToken is Context, IERC20, Ownable {
     }
 
     function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
+        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "BEP20: decreased allowance below zero"));
         return true;
     }
 
@@ -824,8 +846,8 @@ abstract contract AbstractDeflationaryToken is Context, IERC20, Ownable {
     }
 
     function _approve(address owner, address spender, uint256 amount) internal {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
+        require(owner != address(0), "BEP20: approve from the zero address");
+        require(spender != address(0), "BEP20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
@@ -856,7 +878,7 @@ abstract contract AbstractDeflationaryToken is Context, IERC20, Ownable {
 }
 
 
-// File contracts/tokens/abstract/AbstractBurnableDeflToken.sol
+
 
 
 pragma solidity ^0.8.0;
@@ -880,7 +902,7 @@ abstract contract AbstractBurnableDeflToken is AbstractDeflationaryToken {
 }
 
 
-// File contracts/tokens/deflationalAutoLP/abstract/AbstractDeflationaryAutoLPToken.sol
+
 
 
 pragma solidity ^0.8.0;
@@ -1016,8 +1038,8 @@ abstract contract AbstractDeflationaryAutoLPToken is AbstractDeflationaryToken {
         address to,
         uint256 amount
     ) internal virtual override {
-        require(from != address(0), "ERC20: transfer from the zero address");
-        require(to != address(0), "ERC20: transfer to the zero address");
+        require(from != address(0), "BEP20: transfer from the zero address");
+        require(to != address(0), "BEP20: transfer to the zero address");
         require(amount != 0, "Transfer amount can't be zero");
 
         address __owner = owner();
@@ -1028,7 +1050,7 @@ abstract contract AbstractDeflationaryAutoLPToken is AbstractDeflationaryToken {
         // is the token balance of this contract address over the min number of
         // tokens that we need to initiate a swap + liquidity lock?
         // also, don't get caught in a circular liquidity event.
-        // also, don't swap & liquify if sender is uniswap pair.
+        // also, don't swap & liquify if sender is pancake pair.
         uint256 _numTokensSellToAddToLiquidity = numTokensSellToAddToLiquidity; // gas savings
         if (
             balanceOf(address(this)) >= _numTokensSellToAddToLiquidity &&
@@ -1112,13 +1134,13 @@ abstract contract AbstractDeflationaryAutoLPToken is AbstractDeflationaryToken {
 }
 
 
-// File contracts/tokens/deflationalAutoLP/UniswapV2/DeflationaryAutoLPToken.sol
+
 
 
 pragma solidity ^0.8.0;
 contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
 
-    IUniswapV2Router02 public immutable uniswapV2Router;
+    IPancakeV2Router02 public immutable pancakeV2Router;
     address private immutable WETH;
     bool private immutable isToken0;
 
@@ -1133,7 +1155,7 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
         uint256 _numTokensSellToAddToLiquidity,
         bool _swapAndLiquifyEnabled,
 
-        address tUniswapV2Router
+        address tPancakeV2Router
         ) AbstractDeflationaryAutoLPToken (
             tName,
             tSymbol,
@@ -1144,14 +1166,14 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
             maxTxAmount,
             _numTokensSellToAddToLiquidity,
             _swapAndLiquifyEnabled,
-            IUniswapV2Factory(IUniswapV2Router02(tUniswapV2Router).factory())
-                .createPair(address(this), IUniswapV2Router02(tUniswapV2Router).WETH()) // Create a uniswap pair for this new token
+            IPancakeV2Factory(IPancakeV2Router02(tPancakeV2Router).factory())
+                .createPair(address(this), IPancakeV2Router02(tPancakeV2Router).WETH()) // Create a pancake pair for this new token
         ) {
 
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(tUniswapV2Router);
-        uniswapV2Router = _uniswapV2Router;
-        WETH = _uniswapV2Router.WETH();
-        isToken0 = address(this) < _uniswapV2Router.WETH();
+        IPancakeV2Router02 _pancakeV2Router = IPancakeV2Router02(tPancakeV2Router);
+        pancakeV2Router = _pancakeV2Router;
+        WETH = _pancakeV2Router.WETH();
+        isToken0 = address(this) < _pancakeV2Router.WETH();
     }
 
     function withdrawStuckFunds() external onlyOwner {
@@ -1184,7 +1206,7 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
     }
 
     function _swapAndLiquify(uint256 contractTokenBalance) internal override lockTheSwap {
-        (uint256 r0, uint256 r1,) = IUniswapV2Pair(poolAddress).getReserves();
+        (uint256 r0, uint256 r1,) = IPancakeV2Pair(poolAddress).getReserves();
         // split the contract balance into halves
         uint256 half = getOptimalAmountToSell(isToken0 ? int(r0) : int(r1), int(contractTokenBalance));
         uint256 otherHalf = contractTokenBalance - half;
@@ -1201,22 +1223,22 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
         // how much ETH did we just swap into?
         currentBalance = address(this).balance - currentBalance;
 
-        // add liquidity to uniswap
+        // add liquidity to pancake
         _addLiquidity(otherHalf, currentBalance);
 
         emit SwapAndLiquify(half, currentBalance, otherHalf);
     }
 
     function _swapTokensForEth(uint256 tokenAmount) internal override {
-        // generate the uniswap pair path of token -> weth
+        // generate the pancake pair path of token -> weth
         address[] memory path = new address[](2);
         path[0] = address(this);
         path[1] = WETH;
 
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
+        _approve(address(this), address(pancakeV2Router), tokenAmount);
 
         // make the swap
-        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+        pancakeV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
             tokenAmount,
             0, // accept any amount of ETH
             path,
@@ -1227,10 +1249,10 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
 
     function _addLiquidity(uint256 tokenAmount, uint256 ethAmount) internal override {
         // approve token transfer to cover all possible scenarios
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
+        _approve(address(this), address(pancakeV2Router), tokenAmount);
 
         // add the liquidity
-        uniswapV2Router.addLiquidityETH{value: ethAmount}(
+        pancakeV2Router.addLiquidityETH{value: ethAmount}(
             address(this),
             tokenAmount,
             0, // slippage is unavoidable
@@ -1242,7 +1264,7 @@ contract DeflationaryAutoLPToken is AbstractDeflationaryAutoLPToken {
 }
 
 
-// File contracts/tokens/abstract/FeeToAddress.sol
+
 
 
 pragma solidity ^0.8.0;
@@ -1264,7 +1286,7 @@ abstract contract FeeToAddress is Ownable {
 }
 
 
-// File contracts/tokens/deflationalAutoLP/UniswapV2/extensions/FeeToAddr/FeeToAddr.sol
+
 
 
 pragma solidity ^0.8.0;
@@ -1279,7 +1301,7 @@ contract FeeToAddrDeflAutoLPToken is DeflationaryAutoLPToken, FeeToAddress {
         uint256 maxTxAmount,
         uint256 _numTokensSellToAddToLiquidity,
         bool _swapAndLiquifyEnabled,
-        address tUniswapV2Router
+        address tPancakeV2Router
     ) DeflationaryAutoLPToken(
         tName,
         tSymbol,
@@ -1290,7 +1312,7 @@ contract FeeToAddrDeflAutoLPToken is DeflationaryAutoLPToken, FeeToAddress {
         maxTxAmount,
         _numTokensSellToAddToLiquidity,
         _swapAndLiquifyEnabled,
-        tUniswapV2Router) {
+        tPancakeV2Router) {
     }
 
     function _getFeesArray(uint256 tAmount, uint256 rate, bool takeFee) 
@@ -1315,7 +1337,7 @@ contract FeeToAddrDeflAutoLPToken is DeflationaryAutoLPToken, FeeToAddress {
 }
 
 
-// File contracts/tokens/deflationalAutoLP/UniswapV2/extensions/FeeToAddr/BITE_constructed.sol
+
 
 
 pragma solidity ^0.8.0;
@@ -1330,7 +1352,7 @@ contract BITE is FeeToAddrDeflAutoLPToken, AbstractBurnableDeflToken {
         uint256 maxTxAmount,
         uint256 _numTokensSellToAddToLiquidity,
         bool _swapAndLiquifyEnabled,
-        address tUniswapV2Router
+        address tPancakeV2Router
     ) FeeToAddrDeflAutoLPToken(
         tName,
         tSymbol,
@@ -1341,7 +1363,7 @@ contract BITE is FeeToAddrDeflAutoLPToken, AbstractBurnableDeflToken {
         maxTxAmount,
         _numTokensSellToAddToLiquidity,
         _swapAndLiquifyEnabled,
-        tUniswapV2Router) {
+        tPancakeV2Router) {
     }
 
     struct TimeAndAmount {
